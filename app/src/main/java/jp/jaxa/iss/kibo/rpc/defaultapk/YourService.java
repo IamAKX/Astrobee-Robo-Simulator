@@ -2,10 +2,13 @@ package jp.jaxa.iss.kibo.rpc.defaultapk;
 
 import android.graphics.Bitmap;
 
+import org.opencv.core.Mat;
+
 import gov.nasa.arc.astrobee.android.gs.MessageType;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
 import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
+import jp.jaxa.iss.kibo.rpc.api.types.PointCloud;
 
 /**
  * Class meant to handle commands from the Ground Data System and execute them in Astrobee
@@ -29,9 +32,10 @@ public class YourService extends KiboRpcService {
         String valueX = String.valueOf(point.getX());
         api.judgeSendDiscoveredQR(0, valueX);
         String markerId = snapshot.toString();
+        api.judgeSendDiscoveredAR(markerId);
         sendData(MessageType.JSON, "data", "SUCCESS:defaultapk "+markerId);
 
-        // move Robot from the starting point to P1-2
+        // move Robot from the P1-1 to P1-2
         point = new Point(11,-6,5.55);
         quaternion = new Quaternion(0.0f,-0.7071068f,0.0f,0.7071068f);
         api.moveTo(point, quaternion, true);
@@ -39,19 +43,33 @@ public class YourService extends KiboRpcService {
         valueX = String.valueOf(point.getX());
         api.judgeSendDiscoveredQR(0, valueX);
         markerId = snapshot.toString();
+        api.judgeSendDiscoveredAR(markerId);
         sendData(MessageType.JSON, "data", "SUCCESS:defaultapk "+markerId);
 
-        // move Robot from the starting point to P1-3
+        // move Robot from the P1-2 to P1-3
         point = new Point(11, -5.5, 4.33);
+        quaternion = new Quaternion(0.0f,0.7071068f,0.0f,0.7071068f);
+        api.moveTo(point, quaternion, true);
+        snapshot = api.getBitmapNavCam();
+        valueX = String.valueOf(point.getX());
+        api.judgeSendDiscoveredQR(0, valueX);
+        markerId = snapshot.toString();
+        api.judgeSendDiscoveredAR(markerId);
+        sendData(MessageType.JSON, "data", "SUCCESS:defaultapk "+markerId);
+
+        // move Robot from the P1-3 to P2-1
+        point = new Point(10.30,-7.5,4.7);
         quaternion = new Quaternion(0,0,1,0);
         api.moveTo(point, quaternion, true);
         snapshot = api.getBitmapNavCam();
         valueX = String.valueOf(point.getX());
         api.judgeSendDiscoveredQR(0, valueX);
         markerId = snapshot.toString();
+        api.judgeSendDiscoveredAR(markerId);
         sendData(MessageType.JSON, "data", "SUCCESS:defaultapk "+markerId);
 
-        // move Robot from the starting point to P2-1
+
+        // move Robot from the P2-1 to P2-2
         point = new Point(11.5,-8,5);
         quaternion = new Quaternion(0,0,0,1);
         api.moveTo(point, quaternion, true);
@@ -59,31 +77,26 @@ public class YourService extends KiboRpcService {
         valueX = String.valueOf(point.getX());
         api.judgeSendDiscoveredQR(0, valueX);
         markerId = snapshot.toString();
+        api.judgeSendDiscoveredAR(markerId);
         sendData(MessageType.JSON, "data", "SUCCESS:defaultapk "+markerId);
 
-
-        // move Robot from the starting point to P2-2
-        point = new Point(11,-7.7,5.55);
-        quaternion = new Quaternion(4.4f, -5.5f, 6.6f, -7.7f);
-        api.moveTo(point, quaternion, true);
-        snapshot = api.getBitmapNavCam();
-        valueX = String.valueOf(point.getX());
-        api.judgeSendDiscoveredQR(0, valueX);
-        markerId = snapshot.toString();
-        sendData(MessageType.JSON, "data", "SUCCESS:defaultapk "+markerId);
-
-        // move Robot from the starting point to P2-3
-        point = new Point(1.1, -2.2, 3.3);
+        // move Robot from the P2-2 to P2-3
+        point = new Point(11, -7.7, 5.55);
         quaternion = new Quaternion(0.0f,-0.7071068f,0.0f,0.7071068f);
         api.moveTo(point, quaternion, true);
         snapshot = api.getBitmapNavCam();
         valueX = String.valueOf(point.getX());
         api.judgeSendDiscoveredQR(0, valueX);
-        api.laserControl(true);
         markerId = snapshot.toString();
+        api.judgeSendDiscoveredAR(markerId);
         sendData(MessageType.JSON, "data", "SUCCESS:defaultapk "+markerId);
 
+        Mat navCam = api.getMatNavCam();
+        PointCloud pointCloudHazCam = api.getPointCloudHazCam();
 
+
+        api.laserControl(true);
+        api.judgeSendFinishSimulation();
 
     }
 
