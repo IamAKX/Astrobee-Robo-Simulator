@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 
 import org.opencv.core.Mat;
 
+import java.util.HashMap;
+
 import gov.nasa.arc.astrobee.android.gs.MessageType;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
@@ -15,7 +17,8 @@ import jp.jaxa.iss.kibo.rpc.api.types.PointCloud;
  */
 
 public class YourService extends KiboRpcService {
-
+    HashMap<String, Point> KMinMap = new HashMap<>();
+    HashMap<String, Point> KMaxMap = new HashMap<>();
 
 
     @Override
@@ -27,6 +30,7 @@ public class YourService extends KiboRpcService {
         // move Robot from the starting point to P1-1
         Point point = new Point(11.5, -5.7, 4.5);
         Quaternion quaternion = new Quaternion(0,0,0,1);
+        point = checkKIZ(point, new Point(10.75,-4.9,4.8), new Point(10.95,-4.7,5.0));
         api.moveTo(point, quaternion, true);
         Bitmap snapshot = api.getBitmapNavCam();
         String valueX = String.valueOf(point.getX());
@@ -99,6 +103,20 @@ public class YourService extends KiboRpcService {
         api.judgeSendFinishSimulation();
 
     }
+
+    private Point checkKIZ(Point point, Point pMin, Point pMax) {
+        Point p = point;
+        if(point.getX() > pMin.getX() && point.getX() < pMax.getX())
+        {
+
+        }
+        else
+        {
+
+        }
+        return p;
+    }
+
 
     @Override
     public void sendData(MessageType type, String topic,String data) {
